@@ -8,7 +8,6 @@ import {InfoCommand} from "./bot/commands/info.command";
 import {SupportCommand} from "./bot/commands/support.command";
 import {FindCommand} from "./bot/commands/find.command";
 import {stage} from "./bot/scenes/find.scene";
-import {MessagesCommand} from "./bot/commands/messages.command";
 
 
 class Bot {
@@ -23,7 +22,7 @@ class Bot {
         this.commands = [
             new StartCommand(this.bot),
             new FindCommand(this.bot),
-            new InfoCommand(this.bot), new SupportCommand(this.bot), new MessagesCommand(this.bot)]
+            new InfoCommand(this.bot), new SupportCommand(this.bot)]
         for (const command of this.commands) {
             command.handle()
         }

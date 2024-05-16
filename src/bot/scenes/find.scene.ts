@@ -2,6 +2,7 @@ import {Composer, Markup, Scenes} from "telegraf";
 import {MyContext} from "../context/context.interface";
 import {inlineKeyboardCategories} from "../keyboard/categories.keyboard";
 import {categoriesData} from "../data/categories.data";
+import {postRequest} from "../../placeholder/fakeApi.placeholder";
 
 
 const firstStep = new Composer<MyContext>();
@@ -18,7 +19,7 @@ firstStep.on('text', async (ctx) => {
                 if (category.isSelected) {
                     return [Markup.button.callback(category.title + '✅', category.category)]
                 }
-                return [Markup.button.callback(category.title + '-НЕ-', category.category)]
+                return [Markup.button.callback(category.title, category.category)]
             })
 
         await ctx.reply('Выберите категории из этого списка', Markup.inlineKeyboard(markupCategoryKeyboard))
@@ -53,12 +54,28 @@ secondStep.action(/designer|marketing|createSite|producer|target|smm|copywriter|
             if (category.isSelected) {
                 return [Markup.button.callback(category.title + '✅', category.category)]
             }
-            return [Markup.button.callback(category.title + '-НЕ-', category.category)]
+            return [Markup.button.callback(category.title, category.category)]
         })
 
     await ctx.editMessageReplyMarkup({
         inline_keyboard: markupCategoryKeyboard
     });
+    console.log(ctx.scene.session.state.categories)
 });
 
+secondStep.hears('Готово', async (ctx) => {
+    try {
+        const response = JSON.parse(await postRequest())
+        if (response.status === 200) {
+            await ctx.reply(`От сервера пришёл успешный ответ ${response.status}. Следовательно, данные были отправлены на бэкэнд успешно.`)
+            await ctx.reply(response.data[0])
+            await ctx.reply(response.data[1])
+            await ctx.reply(response.data[2])
+            await ctx.scene.leave()
+        }
+    }
+    catch (e) {
+        await ctx.scene.leave()
+    }
+})
 export const stage = new Scenes.Stage<MyContext>([findScene]);

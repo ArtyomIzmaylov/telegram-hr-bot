@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.stage = void 0;
 const telegraf_1 = require("telegraf");
 const categories_data_1 = require("../data/categories.data");
+const fakeApi_placeholder_1 = require("../../placeholder/fakeApi.placeholder");
 const firstStep = new telegraf_1.Composer();
 const secondStep = new telegraf_1.Composer();
 const thirdStep = new telegraf_1.Composer();
@@ -24,7 +25,7 @@ firstStep.on('text', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             if (category.isSelected) {
                 return [telegraf_1.Markup.button.callback(category.title + '✅', category.category)];
             }
-            return [telegraf_1.Markup.button.callback(category.title + '-НЕ-', category.category)];
+            return [telegraf_1.Markup.button.callback(category.title, category.category)];
         });
         yield ctx.reply('Выберите категории из этого списка', telegraf_1.Markup.inlineKeyboard(markupCategoryKeyboard));
         yield ctx.reply('Как выберите категории, можете продолжить', telegraf_1.Markup.keyboard([
@@ -50,10 +51,26 @@ secondStep.action(/designer|marketing|createSite|producer|target|smm|copywriter|
         if (category.isSelected) {
             return [telegraf_1.Markup.button.callback(category.title + '✅', category.category)];
         }
-        return [telegraf_1.Markup.button.callback(category.title + '-НЕ-', category.category)];
+        return [telegraf_1.Markup.button.callback(category.title, category.category)];
     });
     yield ctx.editMessageReplyMarkup({
         inline_keyboard: markupCategoryKeyboard
     });
+    console.log(ctx.scene.session.state.categories);
+}));
+secondStep.hears('Готово', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = JSON.parse(yield (0, fakeApi_placeholder_1.postRequest)());
+        if (response.status === 200) {
+            yield ctx.reply(`От сервера пришёл успешный ответ ${response.status}. Следовательно, данные были отправлены на бэкэнд успешно.`);
+            yield ctx.reply(response.data[0]);
+            yield ctx.reply(response.data[1]);
+            yield ctx.reply(response.data[2]);
+            yield ctx.scene.leave();
+        }
+    }
+    catch (e) {
+        yield ctx.scene.leave();
+    }
 }));
 exports.stage = new telegraf_1.Scenes.Stage([findScene]);

@@ -9,21 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MessagesCommand = void 0;
-const command_class_1 = require("./command.class");
-function sendMessageToUser(bot, userId, messageText) {
-    bot.telegram.sendMessage(userId, messageText);
+exports.postRequest = void 0;
+const mock_data_1 = require("../bot/data/mock.data");
+function postRequest() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield new Promise(resolve => setTimeout(resolve, 1000));
+        return JSON.stringify({ status: 200, data: mock_data_1.mockDataArray });
+    });
 }
-class MessagesCommand extends command_class_1.Command {
-    constructor(bot) {
-        super(bot);
-    }
-    handle() {
-        this.bot.command('messages', (ctx) => __awaiter(this, void 0, void 0, function* () {
-            setTimeout(() => {
-                sendMessageToUser(this.bot, ctx.message.from.id, 'Привет это колбэк');
-            }, 5000);
-        }));
-    }
-}
-exports.MessagesCommand = MessagesCommand;
+exports.postRequest = postRequest;

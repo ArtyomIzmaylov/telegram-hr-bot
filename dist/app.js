@@ -7,7 +7,6 @@ const info_command_1 = require("./bot/commands/info.command");
 const support_command_1 = require("./bot/commands/support.command");
 const find_command_1 = require("./bot/commands/find.command");
 const find_scene_1 = require("./bot/scenes/find.scene");
-const messages_command_1 = require("./bot/commands/messages.command");
 class Bot {
     constructor(configService) {
         this.configService = configService;
@@ -20,7 +19,7 @@ class Bot {
         this.commands = [
             new start_command_1.StartCommand(this.bot),
             new find_command_1.FindCommand(this.bot),
-            new info_command_1.InfoCommand(this.bot), new support_command_1.SupportCommand(this.bot), new messages_command_1.MessagesCommand(this.bot)
+            new info_command_1.InfoCommand(this.bot), new support_command_1.SupportCommand(this.bot)
         ];
         for (const command of this.commands) {
             command.handle();
