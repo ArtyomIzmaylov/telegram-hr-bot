@@ -6,7 +6,7 @@ export interface ICategory {
     category : string
 }
 export const categoriesData : ICategory[] = [
-    { title: "Дизайн", category: 'designer' },
+    { title: "Дизайн", category: 'designer'},
     { title: "Маркетинг", category: 'marketing' },
     { title: "SMM", category: 'smm' },
     { title: "Создание сайтов", category: 'createSite' },

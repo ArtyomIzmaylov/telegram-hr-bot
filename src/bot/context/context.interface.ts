@@ -6,8 +6,9 @@ import {InlineKeyboardButton} from "@telegraf/types";
 
 interface MyWizardSession extends Scenes.WizardSessionData {
     state : {
-        selectedCategories: string[]; //надо добавить интерфейс категорий
-        inlineKeyboardCategories : Markup<InlineKeyboardButton>
+        categories : any[]
+        /*selectedCategories: string[]; //надо добавить интерфейс категорий
+        inlineKeyboardCategories : Markup<InlineKeyboardButton>*/
     }
 }
 

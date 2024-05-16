@@ -11,14 +11,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.stage = void 0;
 const telegraf_1 = require("telegraf");
-const categories_keyboard_1 = require("../keyboard/categories.keyboard");
+const categories_data_1 = require("../data/categories.data");
 const firstStep = new telegraf_1.Composer();
 const secondStep = new telegraf_1.Composer();
 const thirdStep = new telegraf_1.Composer();
 firstStep.on('text', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        ctx.scene.session.state.selectedCategories = [];
-        yield ctx.reply('Выберите категории из этого списка', categories_keyboard_1.inlineKeyboardCategories);
+        ctx.scene.session.state.categories = categories_data_1.categoriesData.map(cat => {
+            return Object.assign(Object.assign({}, cat), { isSelected: false });
+        });
+        const markupCategoryKeyboard = ctx.scene.session.state.categories.map(category => {
+            if (category.isSelected) {
+                return [telegraf_1.Markup.button.callback(category.title + '✅', category.category)];
+            }
+            return [telegraf_1.Markup.button.callback(category.title + '-НЕ-', category.category)];
+        });
+        yield ctx.reply('Выберите категории из этого списка', telegraf_1.Markup.inlineKeyboard(markupCategoryKeyboard));
         yield ctx.reply('Как выберите категории, можете продолжить', telegraf_1.Markup.keyboard([
             [telegraf_1.Markup.button.callback('Готово', 'findReady')],
         ]).oneTime().resize());
@@ -32,12 +40,20 @@ firstStep.on('text', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
 const findScene = new telegraf_1.Scenes.WizardScene("findScene", firstStep, secondStep);
 secondStep.action(/designer|marketing|createSite|producer|target|smm|copywriter|scenarist|assistant|realsVideoMaker/, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const category = ctx.match.input;
-    if (ctx.scene.session.state.selectedCategories.includes(category)) {
-        ctx.scene.session.state.selectedCategories = ctx.scene.session.state.selectedCategories.filter(cat => cat !== category);
-    }
-    else {
-        ctx.scene.session.state.selectedCategories = [...ctx.scene.session.state.selectedCategories, category];
-    }
-    console.log(ctx.scene.session.state.selectedCategories);
+    ctx.scene.session.state.categories = ctx.scene.session.state.categories.map(cat => {
+        if (cat.category === category) {
+            cat.isSelected = !cat.isSelected;
+        }
+        return cat;
+    });
+    const markupCategoryKeyboard = ctx.scene.session.state.categories.map(category => {
+        if (category.isSelected) {
+            return [telegraf_1.Markup.button.callback(category.title + '✅', category.category)];
+        }
+        return [telegraf_1.Markup.button.callback(category.title + '-НЕ-', category.category)];
+    });
+    yield ctx.editMessageReplyMarkup({
+        inline_keyboard: markupCategoryKeyboard
+    });
 }));
 exports.stage = new telegraf_1.Scenes.Stage([findScene]);
