@@ -1,0 +1,1 @@
+export const supportCommandMessage = 'Ссылка на @driive_xx'
